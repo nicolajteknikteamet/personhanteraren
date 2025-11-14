@@ -281,6 +281,29 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.dateRangeSelector {
+  margin: 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dateInputs {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.dateInputs > div {
+  flex: 1;
+}
+
+.dateLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

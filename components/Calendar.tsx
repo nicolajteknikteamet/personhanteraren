@@ -15,6 +15,8 @@ export default function Calendar({ persons }: CalendarProps) {
   const [selectedCell, setSelectedCell] = useState<{ personId: number; date: string } | null>(null);
   const [newLocation, setNewLocation] = useState('');
   const [useCustomLocation, setUseCustomLocation] = useState(false);
+  const [useDateRange, setUseDateRange] = useState(false);
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchLocations();
@@ -84,20 +86,30 @@ export default function Calendar({ persons }: CalendarProps) {
   async function handleLocationUpdate() {
     if (!selectedCell || !newLocation.trim()) return;
 
+    const requestBody: any = {
+      personId: selectedCell.personId,
+      location: newLocation,
+    };
+
+    if (useDateRange && endDate) {
+      requestBody.startDate = selectedCell.date;
+      requestBody.endDate = endDate;
+    } else {
+      requestBody.date = selectedCell.date;
+    }
+
     await fetch('/api/locations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        personId: selectedCell.personId,
-        date: selectedCell.date,
-        location: newLocation,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     setSelectedCell(null);
     setNewLocation('');
+    setUseDateRange(false);
+    setEndDate('');
     fetchLocations();
   }
 
@@ -180,7 +192,57 @@ export default function Calendar({ persons }: CalendarProps) {
             <p>
               Person: {persons.find((p) => p.id === selectedCell.personId)?.name}
             </p>
-            <p>Date: {selectedCell.date}</p>
+            
+            <div className={styles.dateRangeSelector}>
+              <label className={styles.label}>
+                <input
+                  type="radio"
+                  checked={!useDateRange}
+                  onChange={() => {
+                    setUseDateRange(false);
+                    setEndDate('');
+                  }}
+                />
+                Single day
+              </label>
+              
+              {!useDateRange && (
+                <p>Date: {selectedCell.date}</p>
+              )}
+              
+              <label className={styles.label}>
+                <input
+                  type="radio"
+                  checked={useDateRange}
+                  onChange={() => setUseDateRange(true)}
+                />
+                Date range
+              </label>
+              
+              {useDateRange && (
+                <div className={styles.dateInputs}>
+                  <div>
+                    <label className={styles.dateLabel}>Start Date:</label>
+                    <input
+                      type="date"
+                      value={selectedCell.date}
+                      disabled
+                      className={styles.input}
+                    />
+                  </div>
+                  <div>
+                    <label className={styles.dateLabel}>End Date:</label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      min={selectedCell.date}
+                      className={styles.input}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
             
             <div className={styles.locationSelector}>
               <label className={styles.label}>
@@ -243,6 +305,8 @@ export default function Calendar({ persons }: CalendarProps) {
                 setSelectedCell(null);
                 setNewLocation('');
                 setUseCustomLocation(false);
+                setUseDateRange(false);
+                setEndDate('');
               }} className={styles.button}>
                 Cancel
               </button>
