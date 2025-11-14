@@ -1,0 +1,29 @@
+{
+  "name": "personhanteraren",
+  "version": "1.0.0",
+  "description": "Personhanterare is a system for handling persons for Soundforce, an event company. The requirement are: Calender view with an easy way of showing the current week (mon-sun).  Theres 22 persons in the company. They should be able to choose their location for a given day. The calender should show where all persons are currently.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^16.0.3",
+    "next-auth": "^4.24.13",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.4",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "typescript": "^5.9.3"
+  }
+}
