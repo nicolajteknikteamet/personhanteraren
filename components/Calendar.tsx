@@ -86,7 +86,15 @@ export default function Calendar({ persons }: CalendarProps) {
   async function handleLocationUpdate() {
     if (!selectedCell || !newLocation.trim()) return;
 
-    const requestBody: any = {
+    interface LocationUpdateRequest {
+      personId: number;
+      location: string;
+      date?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+
+    const requestBody: LocationUpdateRequest = {
       personId: selectedCell.personId,
       location: newLocation,
     };

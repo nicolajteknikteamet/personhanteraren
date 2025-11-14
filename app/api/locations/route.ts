@@ -1,25 +1,17 @@
 import { NextResponse } from 'next/server';
-import { Location } from '@/types';
-
-let locations: Location[] = [
-  { id: 1, personId: 1, date: '2025-11-10', location: 'Stockholm Office' },
-  { id: 2, personId: 1, date: '2025-11-11', location: 'Gothenburg Event' },
-  { id: 3, personId: 2, date: '2025-11-10', location: 'Malmö Venue' },
-  { id: 4, personId: 2, date: '2025-11-11', location: 'Remote' },
-  { id: 5, personId: 3, date: '2025-11-10', location: 'Stockholm Office' },
-];
+import { db } from '@/lib/db';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
 
-  let filteredLocations = locations;
+  let filteredLocations;
 
   if (startDate && endDate) {
-    filteredLocations = locations.filter(
-      (loc) => loc.date >= startDate && loc.date <= endDate
-    );
+    filteredLocations = db.locations.getByDateRange(startDate, endDate);
+  } else {
+    filteredLocations = db.locations.getAll();
   }
 
   return NextResponse.json(filteredLocations);
@@ -32,48 +24,28 @@ export async function POST(request: Request) {
   if (startDate && endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const updatedLocations: Location[] = [];
+    const updatedLocations = [];
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       
-      const existingIndex = locations.findIndex(
-        (loc) => loc.personId === personId && loc.date === dateStr
-      );
-
-      if (existingIndex >= 0) {
-        locations[existingIndex].location = location;
-        updatedLocations.push(locations[existingIndex]);
-      } else {
-        const newLocation: Location = {
-          id: locations.length + 1,
-          personId,
-          date: dateStr,
-          location,
-        };
-        locations.push(newLocation);
-        updatedLocations.push(newLocation);
-      }
+      const updatedLocation = db.locations.upsert({
+        personId,
+        date: dateStr,
+        location,
+      });
+      
+      updatedLocations.push(updatedLocation);
     }
 
     return NextResponse.json(updatedLocations);
   }
 
-  const existingIndex = locations.findIndex(
-    (loc) => loc.personId === personId && loc.date === date
-  );
+  const updatedLocation = db.locations.upsert({
+    personId,
+    date,
+    location,
+  });
 
-  if (existingIndex >= 0) {
-    locations[existingIndex].location = location;
-    return NextResponse.json(locations[existingIndex]);
-  } else {
-    const newLocation: Location = {
-      id: locations.length + 1,
-      personId,
-      date,
-      location,
-    };
-    locations.push(newLocation);
-    return NextResponse.json(newLocation);
-  }
+  return NextResponse.json(updatedLocation);
 }

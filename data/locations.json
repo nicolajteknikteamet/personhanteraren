@@ -1,0 +1,7 @@
+[
+  { "id": 1, "personId": 1, "date": "2025-11-10", "location": "Stockholm Office" },
+  { "id": 2, "personId": 1, "date": "2025-11-11", "location": "Gothenburg Event" },
+  { "id": 3, "personId": 2, "date": "2025-11-10", "location": "Malmö Venue" },
+  { "id": 4, "personId": 2, "date": "2025-11-11", "location": "Remote" },
+  { "id": 5, "personId": 3, "date": "2025-11-10", "location": "Stockholm Office" }
+]
