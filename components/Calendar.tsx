@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Person, Location } from '@/types';
+import { Person, Location, StandardLocation } from '@/types';
 import styles from './Calendar.module.css';
 
 interface CalendarProps {
@@ -10,13 +10,22 @@ interface CalendarProps {
 
 export default function Calendar({ persons }: CalendarProps) {
   const [locations, setLocations] = useState<Location[]>([]);
+  const [standardLocations, setStandardLocations] = useState<StandardLocation[]>([]);
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getMonday(new Date()));
   const [selectedCell, setSelectedCell] = useState<{ personId: number; date: string } | null>(null);
   const [newLocation, setNewLocation] = useState('');
+  const [useCustomLocation, setUseCustomLocation] = useState(false);
 
   useEffect(() => {
     fetchLocations();
+    fetchStandardLocations();
   }, [currentWeekStart]);
+
+  async function fetchStandardLocations() {
+    const response = await fetch('/api/standard-locations');
+    const data = await response.json();
+    setStandardLocations(data);
+  }
 
   function getMonday(date: Date): Date {
     const d = new Date(date);
@@ -114,6 +123,12 @@ export default function Calendar({ persons }: CalendarProps) {
         </button>
       </div>
 
+      <div className={styles.adminLink}>
+        <a href="/admin" className={styles.link}>
+          ⚙️ Manage Standard Locations
+        </a>
+      </div>
+
       <div className={styles.weekInfo}>
         Week of {weekDates[0].toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
       </div>
@@ -166,19 +181,69 @@ export default function Calendar({ persons }: CalendarProps) {
               Person: {persons.find((p) => p.id === selectedCell.personId)?.name}
             </p>
             <p>Date: {selectedCell.date}</p>
-            <input
-              type="text"
-              value={newLocation}
-              onChange={(e) => setNewLocation(e.target.value)}
-              placeholder="Enter location"
-              className={styles.input}
-              autoFocus
-            />
+            
+            <div className={styles.locationSelector}>
+              <label className={styles.label}>
+                <input
+                  type="radio"
+                  checked={!useCustomLocation}
+                  onChange={() => {
+                    setUseCustomLocation(false);
+                    setNewLocation('');
+                  }}
+                />
+                Select from standard locations
+              </label>
+              
+              {!useCustomLocation && (
+                <select
+                  value={newLocation}
+                  onChange={(e) => setNewLocation(e.target.value)}
+                  className={styles.select}
+                  autoFocus
+                >
+                  <option value="">-- Select a location --</option>
+                  {standardLocations.map((loc) => (
+                    <option key={loc.id} value={loc.name}>
+                      {loc.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              
+              <label className={styles.label}>
+                <input
+                  type="radio"
+                  checked={useCustomLocation}
+                  onChange={() => {
+                    setUseCustomLocation(true);
+                    setNewLocation('');
+                  }}
+                />
+                Enter custom location
+              </label>
+              
+              {useCustomLocation && (
+                <input
+                  type="text"
+                  value={newLocation}
+                  onChange={(e) => setNewLocation(e.target.value)}
+                  placeholder="Enter location"
+                  className={styles.input}
+                  autoFocus
+                />
+              )}
+            </div>
+            
             <div className={styles.modalButtons}>
               <button onClick={handleLocationUpdate} className={styles.buttonPrimary}>
                 Save
               </button>
-              <button onClick={() => setSelectedCell(null)} className={styles.button}>
+              <button onClick={() => {
+                setSelectedCell(null);
+                setNewLocation('');
+                setUseCustomLocation(false);
+              }} className={styles.button}>
                 Cancel
               </button>
             </div>
