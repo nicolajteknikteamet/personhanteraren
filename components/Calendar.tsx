@@ -147,6 +147,9 @@ export default function Calendar({ persons }: CalendarProps) {
         <a href="/admin" className={styles.link}>
           ⚙️ Manage Standard Locations
         </a>
+        <a href="/persons" className={styles.link}>
+          👥 Manage Persons
+        </a>
       </div>
 
       <div className={styles.weekInfo}>
