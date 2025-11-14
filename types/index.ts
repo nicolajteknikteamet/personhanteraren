@@ -18,3 +18,8 @@ export interface WeekLocation {
     [date: string]: string;
   };
 }
+
+export interface StandardLocation {
+  id: number;
+  name: string;
+}

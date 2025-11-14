@@ -61,6 +61,26 @@
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
+.adminLink {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.link {
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.link:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
 .weekInfo {
   text-align: center;
   font-size: 1.2rem;
@@ -221,6 +241,44 @@
 
 .modalButtons button {
   flex: 1;
+}
+
+.locationSelector {
+  margin: 1.5rem 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.label input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 @media (max-width: 768px) {
