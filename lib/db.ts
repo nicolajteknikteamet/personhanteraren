@@ -53,6 +53,45 @@ export const db = {
   persons: {
     getAll: (): Person[] => readCollection<Person>('persons'),
     save: (persons: Person[]): void => writeCollection('persons', persons),
+    
+    create: (name: string, email: string): Person => {
+      const allPersons = readCollection<Person>('persons');
+      const newPerson: Person = {
+        id: allPersons.length > 0 ? Math.max(...allPersons.map(p => p.id)) + 1 : 1,
+        name: name.trim(),
+        email: email.trim(),
+      };
+      allPersons.push(newPerson);
+      writeCollection('persons', allPersons);
+      return newPerson;
+    },
+    
+    update: (id: number, name: string, email: string): Person | null => {
+      const allPersons = readCollection<Person>('persons');
+      const index = allPersons.findIndex(p => p.id === id);
+      
+      if (index === -1) {
+        return null;
+      }
+      
+      allPersons[index].name = name.trim();
+      allPersons[index].email = email.trim();
+      writeCollection('persons', allPersons);
+      return allPersons[index];
+    },
+    
+    delete: (id: number): Person | null => {
+      const allPersons = readCollection<Person>('persons');
+      const index = allPersons.findIndex(p => p.id === id);
+      
+      if (index === -1) {
+        return null;
+      }
+      
+      const deleted = allPersons.splice(index, 1)[0];
+      writeCollection('persons', allPersons);
+      return deleted;
+    },
   },
   
   locations: {
