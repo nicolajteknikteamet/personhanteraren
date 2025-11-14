@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "Stockholm Office" },
+  { "id": 2, "name": "Gothenburg Event" },
+  { "id": 3, "name": "Malmö Venue" },
+  { "id": 4, "name": "Remote" },
+  { "id": 5, "name": "Uppsala Concert Hall" },
+  { "id": 6, "name": "Linköping Arena" }
+]
