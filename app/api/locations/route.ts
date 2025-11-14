@@ -27,7 +27,37 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { personId, date, location } = body;
+  const { personId, date, startDate, endDate, location } = body;
+
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const updatedLocations: Location[] = [];
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      
+      const existingIndex = locations.findIndex(
+        (loc) => loc.personId === personId && loc.date === dateStr
+      );
+
+      if (existingIndex >= 0) {
+        locations[existingIndex].location = location;
+        updatedLocations.push(locations[existingIndex]);
+      } else {
+        const newLocation: Location = {
+          id: locations.length + 1,
+          personId,
+          date: dateStr,
+          location,
+        };
+        locations.push(newLocation);
+        updatedLocations.push(newLocation);
+      }
+    }
+
+    return NextResponse.json(updatedLocations);
+  }
 
   const existingIndex = locations.findIndex(
     (loc) => loc.personId === personId && loc.date === date
